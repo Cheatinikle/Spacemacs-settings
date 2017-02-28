@@ -56,9 +56,6 @@ values."
      haskell
      evil-commentary
      ruby
-     magit
-     evil-magit
-     helm-git
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -68,6 +65,9 @@ values."
    '(
    2048-game
    intero
+   magit
+   evil-magit
+   helm-git
    )
    ;; A list of packages that cannot be updated.
    dotspacemacs-frozen-packages '()
@@ -382,7 +382,7 @@ you should place your code here."
  '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
    (quote
-    (magit fuzzy git bundler robe paredit rvm ruby-tools ruby-test-mode rubocop rspec-mode rbenv rake minitest chruby inf-ruby 2048-game evil-nerd-commenter mmm-mode markdown-toc markdown-mode gh-md evil-commentary intero helm-company helm-c-yasnippet haskell-snippets company-statistics company-ghci company-ghc ghc company-cabal auto-yasnippet ac-ispell flycheck hlint-refactor hindent helm-hoogle haskell-mode company cmm-mode yasnippet auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode package-build spacemacs-theme))))
+    (with-editor magit fuzzy git bundler robe paredit rvm ruby-tools ruby-test-mode rubocop rspec-mode rbenv rake minitest chruby inf-ruby 2048-game evil-nerd-commenter mmm-mode markdown-toc markdown-mode gh-md evil-commentary intero helm-company helm-c-yasnippet haskell-snippets company-statistics company-ghci company-ghc ghc company-cabal auto-yasnippet ac-ispell flycheck hlint-refactor hindent helm-hoogle haskell-mode company cmm-mode yasnippet auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode package-build spacemacs-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
