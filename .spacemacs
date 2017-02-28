@@ -56,6 +56,9 @@ values."
      haskell
      evil-commentary
      ruby
+     magit
+     evil-magit
+     helm-git
      )
    ;; List of additional packages that will be installed without being
    ;; wrapped in a layer. If you need some configuration for these
@@ -313,6 +316,8 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
   (global-linum-mode)
   (spacemacs/toggle-truncate-lines-on)
   (spacemacs/toggle-visual-line-navigation-on)
@@ -327,7 +332,6 @@ you should place your code here."
 
 (defun dotspacemacs/user-keys ()
   (spacemacs/set-leader-keys "pG" 'projectile-regenerate-tags)
-  (spacemacs/set-leader-keys "oht" 'helm-etags-select)
 
   (spacemacs/set-leader-keys "to" 'auto-complete-mode)
 
@@ -336,6 +340,12 @@ you should place your code here."
 
   (define-key evil-normal-state-map "gl" 'evil-first-non-blank)
   (define-key evil-normal-state-map "gL" 'evil-end-of-line)
+
+  (spacemacs/declare-prefix "oh" "haskell")
+  (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohs" 'intero-apply-suggestions)
+  (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohe" 'flycheck-list-errors)
+  (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohl" 'intero-repl-load)
+  (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohd" 'intero-goto-definition)
 
   (spacemacs/declare-prefix "ot" "editing")
   (spacemacs/set-leader-keys "otc" 'capitalize-word)
@@ -348,6 +358,7 @@ you should place your code here."
   (spacemacs/set-leader-keys "oes" 'eval-region)
   (spacemacs/set-leader-keys "oei" 'indent-region)
   (spacemacs/set-leader-keys "oem" 'emacs-lisp-mode)
+  (spacemacs/set-leader-keys "oed" 'evil-goto-definition)
 
   (spacemacs/declare-prefix "on" "neotree")
   (spacemacs/set-leader-keys "ont" 'neotree-toggle)
@@ -368,9 +379,10 @@ you should place your code here."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
    (quote
-    (git bundler robe paredit rvm ruby-tools ruby-test-mode rubocop rspec-mode rbenv rake minitest chruby inf-ruby 2048-game evil-nerd-commenter mmm-mode markdown-toc markdown-mode gh-md evil-commentary intero helm-company helm-c-yasnippet haskell-snippets company-statistics company-ghci company-ghc ghc company-cabal auto-yasnippet ac-ispell flycheck hlint-refactor hindent helm-hoogle haskell-mode company cmm-mode yasnippet auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode package-build spacemacs-theme))))
+    (magit fuzzy git bundler robe paredit rvm ruby-tools ruby-test-mode rubocop rspec-mode rbenv rake minitest chruby inf-ruby 2048-game evil-nerd-commenter mmm-mode markdown-toc markdown-mode gh-md evil-commentary intero helm-company helm-c-yasnippet haskell-snippets company-statistics company-ghci company-ghc ghc company-cabal auto-yasnippet ac-ispell flycheck hlint-refactor hindent helm-hoogle haskell-mode company cmm-mode yasnippet auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode package-build spacemacs-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
