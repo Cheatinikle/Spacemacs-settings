@@ -371,6 +371,8 @@ you should place your code here."
   (spacemacs/set-leader-keys "osn" 'just-search-naver)
   (spacemacs/set-leader-keys "osg" 'just-search-google)
   (spacemacs/set-leader-keys (kbd "os RET") 'just-search)
+
+  (spacemacs/set-leader-keys "og" 'magit-status)
   )
 
 ;; Do not write anything past this comment. This is where Emacs will
@@ -383,7 +385,7 @@ you should place your code here."
  '(evil-want-Y-yank-to-eol nil)
  '(package-selected-packages
    (quote
-    (helm-git evil-magit magit-popup git-commit with-editor magit fuzzy git bundler robe paredit rvm ruby-tools ruby-test-mode rubocop rspec-mode rbenv rake minitest chruby inf-ruby 2048-game evil-nerd-commenter mmm-mode markdown-toc markdown-mode gh-md evil-commentary intero helm-company helm-c-yasnippet haskell-snippets company-statistics company-ghci company-ghc ghc company-cabal auto-yasnippet ac-ispell flycheck hlint-refactor hindent helm-hoogle haskell-mode company cmm-mode yasnippet auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode package-build spacemacs-theme))))
+    (multiple-cursors helm-git evil-magit magit-popup git-commit with-editor magit fuzzy git bundler robe paredit rvm ruby-tools ruby-test-mode rubocop rspec-mode rbenv rake minitest chruby inf-ruby 2048-game evil-nerd-commenter mmm-mode markdown-toc markdown-mode gh-md evil-commentary intero helm-company helm-c-yasnippet haskell-snippets company-statistics company-ghci company-ghc ghc company-cabal auto-yasnippet ac-ispell flycheck hlint-refactor hindent helm-hoogle haskell-mode company cmm-mode yasnippet auto-complete ws-butler window-numbering which-key volatile-highlights vi-tilde-fringe uuidgen use-package toc-org spaceline powerline restart-emacs request rainbow-delimiters popwin persp-mode package-build spacemacs-theme))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
