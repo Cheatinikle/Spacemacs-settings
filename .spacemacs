@@ -341,6 +341,7 @@ you should place your code here."
 
   (define-key evil-normal-state-map "gl" 'evil-first-non-blank)
   (define-key evil-normal-state-map "gL" 'evil-end-of-line)
+  (define-key evil-normal-state-map "gp" 'evil-jump-item)
 
   (spacemacs/declare-prefix "oh" "haskell")
   (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohs" 'intero-apply-suggestions)
