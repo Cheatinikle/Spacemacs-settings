@@ -50,10 +50,13 @@
   (let ((default (thing-at-point 'symbol))
         (show-default (lambda (str) (if (string= "" str)
                                         "" (concat "default " str)))))
-    (read-from-minibuffer
-     (format "Insert keyword (%s) : " (funcall show-default default)))
+    (let ((keyword  (read-from-minibuffer
+                     (format
+                      "Insert keyword (%s) : " (funcall show-default default)))))
+      (if (string= "" keyword) default keyword)
     )
   )
+)
 
 (defun keyword-from-region ()
   (let ((s (region-beginning)) (e (region-end)))
@@ -62,12 +65,8 @@
 ;; search-with
 (defun search-with (prefix &optional input)
   (if (null input) (setf input 'keyword-from-minibuffer))
-  (let ((keyword (funcall input)))
-    (if (string= "" keyword)
-        (browse-url (concat prefix default))
-      (browse-url (concat prefix keyword)))
-    )
-  )
+  (browse-url (concat prefix (funcall input)))
+)
 
 (provide 'just-search)
 
