@@ -2,17 +2,17 @@
 
 ;; Engine hash table
 
-(setq engines (create-hash-table
-               '(("naver" "https://search.naver.com/search.naver?where=nexearch&ie=utf8&query=")
-                 ("google" "https://www.google.co.kr/#q=")
-                 ("stackoverflow"  "https://www.google.co.kr/#q=site:stackoverflow.com+"))))
-
 (defun create-hash-table (hashes)
   (let ((table (make-hash-table :test 'equal)))
     (loop for hash in hashes do
           (puthash (first hash) (second hash) table))
     table)
   )
+
+(setq engines (create-hash-table
+               '(("naver" "https://search.naver.com/search.naver?where=nexearch&ie=utf8&query=")
+                 ("google" "https://www.google.co.kr/#q=")
+                 ("stackoverflow"  "https://www.google.co.kr/#q=site:stackoverflow.com+"))))
 
 (defun get-engine (engine)
   (gethash engine engines))
