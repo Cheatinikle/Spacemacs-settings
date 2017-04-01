@@ -325,9 +325,10 @@ you should place your code here."
 
   (progn
     (add-to-load-path-if-exists "emacs-package")
-    (require 'just-search))
-
+    (require 'just-search)
+    )
   (dotspacemacs/user-keys)
+
   (setq projectile-tags-command (concat (getenv "APPDATA") "\\emacs-plugins\\ctags58\\ctags.exe -R -e"))
   )
 
@@ -372,7 +373,7 @@ you should place your code here."
   (spacemacs/set-leader-keys "osn" 'just-search-naver)
   (spacemacs/set-leader-keys "osg" 'just-search-google)
   (spacemacs/set-leader-keys "osr" 'just-search-region)
-  (spacemacs/set-leader-keys (kbd "os RET") 'just-search)
+  (spacemacs/set-leader-keys (kbd "os RET") 'just-search-minibuffer)
 
   (spacemacs/set-leader-keys "og" 'magit-status)
   )
