@@ -1,52 +1,43 @@
 ;; -*- lexical-binding: t -*-
 
-;; Engine hash table
+(defun macro-conc (&rest args)
+  (intern (apply 'concat (mapcar 'symbol-name args))))
 
-(defun create-hash-table (hashes)
-  (let ((table (make-hash-table :test 'equal)))
-    (loop for hash in hashes do
-          (puthash (first hash) (second hash) table))
-    table)
-  )
+(defconst engines (make-hash-table :test 'equal) "Engine lists")
 
-(setq engines (create-hash-table
-               '(("naver" "https://search.naver.com/search.naver?where=nexearch&ie=utf8&query=")
-                 ("google" "https://www.google.co.kr/#q=")
-                 ("stackoverflow"  "https://www.google.co.kr/#q=site:stackoverflow.com+"))))
+(cl-defmacro create-search-command (name &key input)
+  "Given function with no argument that somehow gets user input keyword,  creates command with it."
+  `(defun ,(macro-conc 'just-search- name) (engine)
+     (interactive "sWhich engine to use? ")
+     (let ((prefix (get-engine engine)))
+       (if prefix (search-with prefix ,input)
+         (message "Invalid engine!")))
+     ))
+
+(defmacro make-engine (name prefix)
+  "Creates the function that searches given keyword with engine. Puts engine to engine lists"
+  `(progn
+     (defun ,(macro-conc 'just-search- name) ()
+       (interactive)
+       (search-with (get-engine ,(symbol-name name))))
+     (puthash ,(symbol-name name) ,prefix engines)))
 
 (defun get-engine (engine)
+  "Gets engine frm engine lists"
   (gethash engine engines))
 
-;; Major just-search functions
 
-(defun just-search-region (engine)
-  (interactive "sWhich engine to use? ")
-  (let ((prefix (get-engine engine)))
-    (if prefix (search-with prefix 'keyword-from-region)
-      (message "Invalid engine!")))
-  )
+(create-search-command region :input 'keyword-from-region)
+(create-search-command minibuffer)
 
-(defun just-search (engine)
-  (interactive "sWhich engine to use? ")
-  (let ((prefix (get-engine engine)))
-    (if prefix (search-with prefix)
-      (message "Invalid engine!"))))
+(make-engine naver "https://search.naver.com/search.naver?where=nexearch&ie=utf8&query=")
+(make-engine google "https://www.google.co.kr/#q=")
+(make-engine stackoverflow "https://www.google.co.kr/#q=site:stackoverflow.com+")
 
-;; Minor just-search functions
-(defun just-search-naver ()
-  (interactive)
-  (search-with (get-engine "naver")))
 
-(defun just-search-google ()
-  (interactive)
-  (search-with (get-engine "google")))
 
-(defun just-search-stackoverflow ()
-  (interactive)
-  (search-with (get-engine "stackoverflow")))
-
-;; keyword-from functions
 (defun keyword-from-minibuffer ()
+  "Gets keyword from minibuffer"
   (let ((default (thing-at-point 'symbol))
         (show-default (lambda (str) (if (string= "" str)
                                         "" (concat "default " str)))))
@@ -59,12 +50,13 @@
 )
 
 (defun keyword-from-region ()
+  "Gets keyword from selected region"
   (let ((s (region-beginning)) (e (region-end)))
     (buffer-substring s e)))
 
-;; search-with
 (defun search-with (prefix &optional input)
-  (if (null input) (setf input 'keyword-from-minibuffer))
+  "Searches keyword with given input"
+  (unless input (setf input 'keyword-from-minibuffer))
   (browse-url (concat prefix (funcall input)))
 )
 
