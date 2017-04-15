@@ -46,6 +46,11 @@
                                   (hash-table-values temp-repl--repl-lists))))))
     (helm :sources '(source))))
 
+(defun temp-repl-clear ()
+  (interactive)
+  (clrhash temp-repl--repl-lists)
+  (clrhash temp-repl--rest-lists))
+
 (add-hook 'kill-buffer-hook 'temp-repl-restore)
 
 (provide 'temp-repl)
