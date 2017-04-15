@@ -18,7 +18,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;;;
 
-(defconst engines (make-hash-table :test 'equal) "Engine lists")
+(defvar engines (make-hash-table :test 'equal) "Engine lists")
 
 (defmacro make-engine (name prefix)
   "Creates the function that searches given keyword with engine. Puts engine to engine lists"
