@@ -3,7 +3,7 @@
 (defun macro-conc (&rest args)
   (intern (apply 'concat (mapcar 'symbol-name args))))
 
-(defun if-nil (object default)
+(defmacro if-nil (object default)
   (if object object default))
 
 (defun if-empty (string default)
@@ -11,9 +11,9 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun search-with (prefix &optional keyword)
-  "Searches keyword with given input"
-  (browse-url (concat prefix (if-nil keyword (keyword-from-minibuffer))))
+(defun search-with (prefix keyword)
+  "Searches keyword with given prefix(search engine)"
+  (browse-url (concat prefix keyword))
   )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:;;;;;;;;;;;;;;
@@ -25,7 +25,7 @@
   `(progn
      (defun ,(macro-conc 'just-search- name) ()
        (interactive)
-       (search-with (get-engine ,(symbol-name name))))
+       (search-with (get-engine ,(symbol-name name)) (keyword-from-minibuffer)))
      (puthash ,(symbol-name name) ,prefix engines)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -40,12 +40,12 @@
      (interactive "sWhich engine to use? ")
      (let ((prefix (get-engine engine)))
        (if prefix
-           (search-with prefix)
+           (search-with prefix (funcall ,input))
          (message "Invalid engine!")))
      ))
 
 (create-search-command region :input 'keyword-from-region)
-(create-search-command minibuffer)
+(create-search-command minibuffer :input 'keyword-from-minibuffer)
 
 (make-engine naver "https://search.naver.com/search.naver?where=nexearch&ie=utf8&query=")
 (make-engine google "https://www.google.co.kr/#q=")
