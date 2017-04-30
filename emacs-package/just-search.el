@@ -1,15 +1,6 @@
 ;; -*- lexical-binding: t -*-
 
-(defun macro-conc (&rest args)
-  (intern (apply 'concat (mapcar 'symbol-name args))))
-
-(defmacro if-nil (object default)
-  (if object object default))
-
-(defun if-empty (string default)
-  (if (string= "" string) default string))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(require 'just-utils)
 
 (defun search-with (prefix keyword)
   "Searches keyword with given prefix(search engine)"
