@@ -32,12 +32,12 @@
   (remhash (gethash target temp-repl--repl-lists) temp-repl--rest-lists)
   (remhash target temp-repl--repl-lists))
 
-(defun temp-repl-remove-helm ()
-  (interactive)
-  (let ((source `((name . "Which to remove? ")
-                  (candidates . ,(hash-table-keys temp-repl--repl-lists))
-                  (action . (lambda (item) (temp-repl-remove item))))))
-    (helm :sources '(source))))
+;; (defun temp-repl-remove-helm ()
+;;   (interactive)
+;;   (let ((source `((name . "Which to remove? ")
+;;                   (candidates . ,(hash-table-keys temp-repl--repl-lists))
+;;                   (action . (lambda (item) (temp-repl-remove item))))))
+;;     (helm :sources '(source))))
 
 (defun temp-repl-list ()
   (interactive)
@@ -46,12 +46,12 @@
                                   (lambda (a b) (concat a " -> " b))
                                   (hash-table-keys temp-repl--repl-lists)
                                   (hash-table-values temp-repl--repl-lists)))
-                  (action . (("Delete item" . ,(|> (lambda (x) (funcall2
-                                                            (apply-partially (swap 'split-string) " -> ") x))
-                                                   'car
-                                                   'temp-repl-remove))
-
-                             )))))
+                  (action . (("Add item" . ,(lambda (_) (progn (temp-repl-add) (temp-repl-list))))
+                             ("Delete item" . ,(lambda (item) (progn (funcall (|> (lambda (x) (funcall2
+                                                                                  (apply-partially (swap 'split-string) " -> ") x))
+                                                                         'car
+                                                                         'temp-repl-remove) item)
+                                                                 (temp-repl-list)))))))))
     (helm :sources '(source))))
 
 
