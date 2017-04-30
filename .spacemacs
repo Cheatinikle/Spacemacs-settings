@@ -320,6 +320,8 @@ you should place your code here."
 
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
   (add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
+  (add-hook 'emacs-lisp-mode-hook (lambda () (push '("funcall" . ?ζ) lisp--prettify-symbols-alist))) 
+
   (global-linum-mode)
   (spacemacs/toggle-truncate-lines-on)
   (spacemacs/toggle-visual-line-navigation-on)
