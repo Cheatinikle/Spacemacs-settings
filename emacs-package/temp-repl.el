@@ -1,3 +1,5 @@
+(require 'just-utils)
+
 (defvar temp-repl--repl-lists (make-hash-table :test 'equal))
 (defvar temp-repl--rest-lists (make-hash-table :test 'equal))
 
@@ -43,15 +45,22 @@
                   (candidates . ,(-zip-with
                                   (lambda (a b) (concat a " -> " b))
                                   (hash-table-keys temp-repl--repl-lists)
-                                  (hash-table-values temp-repl--repl-lists))))))
+                                  (hash-table-values temp-repl--repl-lists)))
+                  (action . (("Delete item" . ,(|> (lambda (x) (funcall2
+                                                            (apply-partially (swap 'split-string) " -> ") x))
+                                                   'car
+                                                   'temp-repl-remove))
+
+                             )))))
     (helm :sources '(source))))
+
 
 (defun temp-repl-clear ()
   (interactive)
   (clrhash temp-repl--repl-lists)
   (clrhash temp-repl--rest-lists))
 
-(add-hook 'kill-buffer-hook 'temp-repl-restore)
+;(add-hook 'kill-buffer-hook (lambda () (temp-repl-restore) (save-buffer)))
 
 (provide 'temp-repl)
 
