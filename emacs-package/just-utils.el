@@ -21,15 +21,10 @@
 (defun swap (f)
   (lambda (y x) (apply-partially f x y)))
 
-(funcall (funcall (apply-partially (swap '-) 2 ) 3) 4)
-
-
-
-
-(funcall (|> '1+ (lambda (n) (* n 2)) (lambda (n) (* n n))) 1)
-
-(funcall (|> '1+) 2)
-
-(split-string "a  -> b" " -> ")
+(defun funcall-p (f &rest args)
+  (condition-case nil
+      (apply f args)
+    (wrong-number-of-arguments
+      (apply 'apply-partially f args))))
 
 (provide 'just-utils)
