@@ -319,6 +319,7 @@ explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
 
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+  (add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
   (global-linum-mode)
   (spacemacs/toggle-truncate-lines-on)
   (spacemacs/toggle-visual-line-navigation-on)
@@ -326,6 +327,7 @@ you should place your code here."
   (progn
     (add-to-load-path-if-exists "emacs-package")
     (require 'just-search)
+    (require 'temp-repl)
     )
   (dotspacemacs/user-keys)
 
@@ -359,9 +361,10 @@ you should place your code here."
   (spacemacs/set-leader-keys "oep" 'eval-print-last-sexp)
   ;; (spacemacs/set-leader-keys "oeb" 'eval-buffer)
   (spacemacs/set-leader-keys "oes" 'eval-region)
-  (spacemacs/set-leader-keys "oei" 'indent-region)
+  (spacemacs/set-leader-keys "oei" 'indent-sexp)
   (spacemacs/set-leader-keys "oem" 'emacs-lisp-mode)
   (spacemacs/set-leader-keys "oed" 'evil-goto-definition)
+  (spacemacs/set-leader-keys "oex" 'kill-sexp)
 
   (spacemacs/declare-prefix "on" "neotree")
   (spacemacs/set-leader-keys "ont" 'neotree-toggle)
@@ -374,6 +377,14 @@ you should place your code here."
   (spacemacs/set-leader-keys "osg" 'just-search-google)
   (spacemacs/set-leader-keys "osr" 'just-search-region)
   (spacemacs/set-leader-keys (kbd "os RET") 'just-search-minibuffer)
+
+  (spacemacs/declare-prefix "or" "temp-repl")
+  (spacemacs/set-leader-keys "ora" 'temp-repl-add)
+  (spacemacs/set-leader-keys "orx" 'temp-repl-remove)
+  (spacemacs/set-leader-keys (kbd "or RET") 'temp-repl-apply)
+  (spacemacs/set-leader-keys "orr" 'temp-repl-restore)
+  (spacemacs/set-leader-keys "orl" 'temp-repl-list)
+  (spacemacs/set-leader-keys "orc" 'temp-repl-clear)
 
   (spacemacs/set-leader-keys "og" 'magit-status)
   )
