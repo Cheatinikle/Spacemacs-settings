@@ -20,10 +20,16 @@
   (interactive)
   (temp-repl-in temp-repl--rest-lists))
 
-(defun temp-repl-add ()
+(defun temp-repl--restore-and-kill-buffer ()
   (interactive)
-  (let ((from (read-from-minibuffer "From... "))
-        (to (read-from-minibuffer "To... ")))
+  (temp-repl-restore)
+  (kill-buffer))
+
+
+(defun temp-repl-add (&optional from to)
+  (interactive)
+  (let ((from (if-nil from (read-from-minibuffer "From... ")))
+        (to (if-nil to (read-from-minibuffer "To... "))))
     (puthash from to temp-repl--repl-lists)
     (puthash to from temp-repl--rest-lists)))
 
