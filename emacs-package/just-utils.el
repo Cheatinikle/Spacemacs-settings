@@ -21,6 +21,9 @@
 (defun swap (f)
   (lambda (y x) (apply-partially f x y)))
 
+(defun funcall2 (&rest body)
+  (funcall (apply 'funcall body)))
+
 (defun funcall-p (f &rest args)
   (condition-case nil
       (apply f args)
