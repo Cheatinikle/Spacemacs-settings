@@ -337,6 +337,8 @@ you should place your code here."
   )
 
 (defun dotspacemacs/user-keys ()
+  (spacemacs/set-leader-keys "bd" 'temp-repl--restore-and-kill-buffer)
+
   (spacemacs/set-leader-keys "pG" 'projectile-regenerate-tags)
 
   (spacemacs/set-leader-keys "to" 'auto-complete-mode)
@@ -367,6 +369,7 @@ you should place your code here."
   (spacemacs/set-leader-keys "oem" 'emacs-lisp-mode)
   (spacemacs/set-leader-keys "oed" 'evil-goto-definition)
   (spacemacs/set-leader-keys "oex" 'kill-sexp)
+  (spacemacs/set-leader-keys "oe'" 'mark-sexp)
 
   (spacemacs/declare-prefix "on" "neotree")
   (spacemacs/set-leader-keys "ont" 'neotree-toggle)
