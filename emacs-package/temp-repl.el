@@ -51,7 +51,8 @@
                                                                                   (apply-partially (swap 'split-string) " -> ") x))
                                                                          'car
                                                                          'temp-repl-remove) item)
-                                                                 (temp-repl-list)))))))))
+                                                                 (temp-repl-list))))
+                             ("Clear lists" . ,(lambda (-) (progn (temp-repl-clear) (temp-repl-list)))))))))
     (helm :sources '(source))))
 
 
