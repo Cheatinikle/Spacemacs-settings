@@ -3,7 +3,7 @@
 (defun macro-conc (&rest args)
   (intern (apply 'concat (mapcar 'symbol-name args))))
 
-(defmacro if-nil (object default)
+(defun if-nil (object default)
   (if object object default))
 
 (defun if-empty (string default)
@@ -13,7 +13,7 @@
   (lambda (x) (funcall f (funcall g x))))
 
 (defun <| (&rest fs)
-  (-reduce 'function-compose fs))
+  (-reduce 'compose fs))
 
 (defun |> (&rest fs)
  (apply '<| (reverse fs)))
