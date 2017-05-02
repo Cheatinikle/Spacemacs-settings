@@ -1,16 +1,18 @@
 (require 'just-utils)
 
+(defvar temp-repl--apply-to-minibuffer t)
+
 (defvar temp-repl--repl-lists (make-hash-table :test 'equal))
 (defvar temp-repl--rest-lists (make-hash-table :test 'equal))
 
 (defun temp-repl-in (htable)
-  (-each (hash-table-keys htable)
-    (lambda (key)
-      (save-excursion
-        (goto-char (point-min))
-        (while (search-forward key nil t)
-          (replace-match (gethash key htable))))))
-  )
+  (unless (and (not temp-repl--apply-to-minibuffer) (minibufferp))
+    (-each (hash-table-keys htable)
+      (lambda (key)
+        (save-excursion
+          (goto-char (point-min))
+          (while (and (search-forward key nil t) (<= (point) (point-max)))
+            (replace-match (gethash key htable))))))))
 
 (defun temp-repl-apply ()
   (interactive)
@@ -34,6 +36,7 @@
     (puthash to from temp-repl--rest-lists)))
 
 (defun temp-repl-remove (target)
+  (when temp-repl-mode (error "Error : Please disable temp-repl mode"))
   (interactive "sWhat to remove?")
   (remhash (gethash target temp-repl--repl-lists) temp-repl--rest-lists)
   (remhash target temp-repl--repl-lists))
@@ -63,9 +66,11 @@
 
 
 (defun temp-repl-clear ()
+  (when temp-repl-mode (error "Error : Please disable temp-repl mode"))
   (interactive)
   (clrhash temp-repl--repl-lists)
   (clrhash temp-repl--rest-lists))
+
 
 ;(add-hook 'kill-buffer-hook (lambda () (temp-repl-restore) (save-buffer)))
 
