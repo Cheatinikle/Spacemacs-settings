@@ -329,7 +329,7 @@ you should place your code here."
   (progn
     (add-to-load-path-if-exists "emacs-package")
     (require 'just-search)
-    (require 'temp-repl)
+    (require 'temp-repl-mode)
     )
   (dotspacemacs/user-keys)
 
