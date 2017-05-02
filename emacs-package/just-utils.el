@@ -3,8 +3,8 @@
 (defun macro-conc (&rest args)
   (intern (apply 'concat (mapcar 'symbol-name args))))
 
-(defun if-nil (object default)
-  (if object object default))
+(defmacro if-nil (object default)
+  `(if ,object ,object ,default))
 
 (defun if-empty (string default)
   (if (string= "" string) default string))
