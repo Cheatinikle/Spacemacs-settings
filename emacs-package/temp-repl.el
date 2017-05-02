@@ -1,6 +1,7 @@
 (require 'just-utils)
 
 (defvar temp-repl--apply-to-minibuffer t)
+(defvar temp-repl--disable-removing-if-mode-on t)
 
 (defvar temp-repl--repl-lists (make-hash-table :test 'equal))
 (defvar temp-repl--rest-lists (make-hash-table :test 'equal))
@@ -53,7 +54,8 @@
     (puthash to from temp-repl--rest-lists)))
 
 (defun temp-repl-remove (target)
-  (when temp-repl-mode (error "Error : Please disable temp-repl mode"))
+  (when (and temp-repl-mode temp-repl--disable-removing-if-mode-on)
+    (error "Error : Please disable temp-repl mode"))
   (interactive "sWhat to remove?")
   (remhash (gethash target temp-repl--repl-lists) temp-repl--rest-lists)
   (remhash target temp-repl--repl-lists))
@@ -83,7 +85,8 @@
 
 
 (defun temp-repl-clear ()
-  (when temp-repl-mode (error "Error : Please disable temp-repl mode"))
+  (when (and temp-repl-mode temp-repl--disable-removing-if-mode-on)
+    (error "Error : Please disable temp-repl mode"))
   (interactive)
   (clrhash temp-repl--repl-lists)
   (clrhash temp-repl--rest-lists))
