@@ -4,12 +4,15 @@
   "Temporary replacement"
   :init-value nil
   (if temp-repl-mode
-    (temp-repl-apply)
-    (add-hook 'post-command-hook 'temp-repl-apply)
+    (progn
+      (temp-repl-apply)
+      (add-hook 'post-command-hook 'temp-repl-apply))
     (progn
       (remove-hook 'post-command-hook 'temp-repl-apply)
       (temp-repl-restore)))
   )
 
 (provide 'temp-repl-mode)
+
+
 
