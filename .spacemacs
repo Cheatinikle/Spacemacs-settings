@@ -386,8 +386,8 @@ you should place your code here."
   (spacemacs/declare-prefix "or" "temp-repl")
   (spacemacs/set-leader-keys "ora" 'temp-repl-add)
   (spacemacs/set-leader-keys "orx" 'temp-repl-remove)
-  (spacemacs/set-leader-keys (kbd "or RET") 'temp-repl-apply)
-  (spacemacs/set-leader-keys "orr" 'temp-repl-restore)
+  (spacemacs/set-leader-keys (kbd "or RET") 'temp-repl-apply-to-buffer)
+  (spacemacs/set-leader-keys "orr" 'temp-repl-restore-buffer)
   (spacemacs/set-leader-keys "orl" 'temp-repl-list)
   (spacemacs/set-leader-keys "orc" 'temp-repl-clear)
 
