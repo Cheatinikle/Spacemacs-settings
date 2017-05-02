@@ -322,9 +322,11 @@ you should place your code here."
     (require 'just-search)
     (require 'temp-repl-mode))
 
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+  (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
   (add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
   (add-hook 'emacs-lisp-mode-hook (lambda () (push '("funcall" . ?ζ) lisp--prettify-symbols-alist))) 
+
+  (temp-repl-add "funcall2" "ζζ")
 
   (global-linum-mode)
   (spacemacs/toggle-truncate-lines-on)
