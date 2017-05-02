@@ -5,22 +5,39 @@
 (defvar temp-repl--repl-lists (make-hash-table :test 'equal))
 (defvar temp-repl--rest-lists (make-hash-table :test 'equal))
 
-(defun temp-repl-in (htable)
+(defun temp-repl-in-region (beginning end htable)
   (unless (and (not temp-repl--apply-to-minibuffer) (minibufferp))
     (-each (hash-table-keys htable)
       (lambda (key)
         (save-excursion
-          (goto-char (point-min))
-          (while (and (search-forward key nil t) (<= (point) (point-max)))
+          (goto-char beginning)
+          (while (and (search-forward key nil t) (<= (point) end))
             (replace-match (gethash key htable))))))))
 
-(defun temp-repl-apply ()
-  (interactive)
-  (temp-repl-in temp-repl--repl-lists))
+(defun temp-repl-in-buffer (htable)
+  (temp-repl-in-region (point-min) (point-max) htable))
 
-(defun temp-repl-restore ()
+(defun temp-repl-in-word (htable)
+  (let ((beginning (car (bounds-of-thing-at-point 'word)))
+        (end (cdr (bounds-of-thing-at-point 'word))))
+    (if (and beginning end) (temp-repl-in-region beginning end htable))))
+
+(defun temp-repl-apply-to-buffer ()
   (interactive)
-  (temp-repl-in temp-repl--rest-lists))
+  (temp-repl-in-buffer temp-repl--repl-lists))
+
+(defun temp-repl-restore-buffer ()
+  (interactive)
+  (temp-repl-in-buffer temp-repl--rest-lists))
+
+(defun temp-repl-apply-to-word ()
+  (interactive)
+  (temp-repl-in-word temp-repl--repl-lists))
+
+;; (defun temp-repl-restore-word ()
+;;   (interactive)
+;;   (temp-repl-in-word temp-repl--rest-lists))
+
 
 (defun temp-repl--restore-and-kill-buffer ()
   (interactive)
