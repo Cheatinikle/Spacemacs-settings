@@ -30,4 +30,7 @@
     (wrong-number-of-arguments
       (apply 'apply-partially f args))))
 
+(defmacro letw (&rest body)
+  `(let ,(funcall (|> 'last 'cdar) body) ,@(butlast body)))
+
 (provide 'just-utils)
