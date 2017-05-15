@@ -45,7 +45,6 @@
   (temp-repl-restore)
   (kill-buffer))
 
-
 (defun temp-repl-add (&optional from to)
   (interactive)
   (let ((from (if-nil from (read-from-minibuffer "From... ")))
