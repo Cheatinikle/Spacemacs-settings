@@ -3,8 +3,8 @@
 (defun macro-conc (&rest args)
   (intern (apply 'concat (mapcar 'symbol-name args))))
 
-(defun if-nil (object default)
-  (if object object default))
+(defmacro if-nil (object default)
+  `(if ,object ,object ,default))
 
 (defun if-empty (string default)
   (if (string= "" string) default string))
@@ -29,5 +29,8 @@
       (apply f args)
     (wrong-number-of-arguments
       (apply 'apply-partially f args))))
+
+(defmacro letw (&rest body)
+  `(let ,(funcall (|> 'last 'cdar) body) ,@(butlast body)))
 
 (provide 'just-utils)

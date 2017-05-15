@@ -317,20 +317,21 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
+  (progn
+    (add-to-load-path-if-exists "emacs-package")
+    (require 'just-search)
+    (require 'temp-repl-mode))
 
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
   (add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
   (add-hook 'emacs-lisp-mode-hook (lambda () (push '("funcall" . ?ζ) lisp--prettify-symbols-alist))) 
 
+  (temp-repl-add "funcall2" "ζζ")
+
   (global-linum-mode)
   (spacemacs/toggle-truncate-lines-on)
   (spacemacs/toggle-visual-line-navigation-on)
 
-  (progn
-    (add-to-load-path-if-exists "emacs-package")
-    (require 'just-search)
-    (require 'temp-repl)
-    )
   (dotspacemacs/user-keys)
 
   (setq projectile-tags-command (concat (getenv "APPDATA") "\\emacs-plugins\\ctags58\\ctags.exe -R -e"))
