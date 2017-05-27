@@ -11,32 +11,33 @@
 
 (defvar engines (make-hash-table :test 'equal) "Engine lists")
 
-(defmacro make-engine (name prefix)
-  "Creates the function that searches given keyword with engine. Puts engine to engine lists"
-  `(progn
-     (defun ,(macro-conc 'just-search- name) ()
-       (interactive)
-       (search-with (get-engine ,(symbol-name name)) (keyword-from-minibuffer)))
-     (puthash ,(symbol-name name) ,prefix engines)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun get-engine (engine)
-  "Gets engine frm engine lists"
-  (gethash engine engines))
-
-(cl-defmacro create-search-command (name &key input)
+(cl-defmacro create-search-command (name &key input engine)
   "Given function with no argument that somehow gets user input keyword,  creates command with it."
-  `(defun ,(macro-conc 'just-search- name) (engine)
-     (interactive "sWhich engine to use? ")
-     (let ((prefix (get-engine engine)))
+  `(defun ,(macro-conc 'just-search- name) ()
+     (interactive)
+     (let ((prefix (get-engine (funcall ,engine))))
        (if prefix
            (search-with prefix (funcall ,input))
          (message "Invalid engine!")))
      ))
 
-(create-search-command region :input 'keyword-from-region)
-(create-search-command minibuffer :input 'keyword-from-minibuffer)
+(defmacro make-engine (name prefix)
+  "Creates the function that searches given keyword with engine. Puts engine to engine lists"
+  `(progn
+     (create-search-command ,name :input 'keyword-from-anywhere
+                                 :engine (lambda () ,(symbol-name name)))
+     (puthash ,(symbol-name name) ,prefix engines)))
+
+(defun get-engine (engine)
+  "Gets engine frm engine lists"
+  (gethash engine engines))
+
+(create-search-command region     :input 'keyword-from-region
+                                  :engine (lambda () (read-from-minibuffer "Engine? ")))
+(create-search-command minibuffer :input 'keyword-from-minibuffer
+                                  :engine (lambda () (read-from-minibuffer "Engine? ")))
+(create-search-command anywhere   :input 'keyword-from-anywhere
+                                  :engine (lambda () (read-from-minibuffer "Engine? ")))
 
 (make-engine naver "https://search.naver.com/search.naver?where=nexearch&ie=utf8&query=")
 (make-engine google "https://www.google.co.kr/#q=")
@@ -44,18 +45,24 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defun keyword-from-minibuffer ()
-  (let ((default (thing-at-point 'symbol)))
-    (if-empty
-     (read-from-minibuffer
+(defun keyword-from-minibuffer* (default)
+  (if-empty
+    (read-from-minibuffer
       (format "Insert keyword %s : "
               (if default (format "(default %s)" default) "")))
      default))
-  )
+
+(defun keyword-from-minibuffer ()
+  (keyword-from-minibuffer* (thing-at-point 'symbol)))
 
 (defun keyword-from-region ()
   "Gets keyword from selected region"
   (let ((s (region-beginning)) (e (region-end)))
     (buffer-substring s e)))
+
+(defun keyword-from-anywhere ()
+  (if (region-active-p)
+    (keyword-from-minibuffer* (keyword-from-region))
+    (keyword-from-minibuffer)))
 
 (provide 'just-search)
