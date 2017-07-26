@@ -338,7 +338,7 @@ you should place your code here."
   )
 
 (defun dotspacemacs/user-keys ()
-  (spacemacs/set-leader-keys "bd" 'temp-repl--restore-and-kill-buffer)
+  ;; (spacemacs/set-leader-keys "bd" 'temp-repl--restore-and-kill-buffer)
 
   (spacemacs/set-leader-keys "pG" 'projectile-regenerate-tags)
 
