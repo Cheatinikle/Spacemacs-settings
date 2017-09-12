@@ -32,5 +32,17 @@
 
 (defmacro letw (&rest body)
   `(let ,(funcall (|> 'last 'cdar) body) ,@(butlast body)))
+                   
+(defun get-string-from-file (filePath)
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (buffer-string)))                   
+                                      
+(cl-defun get-strings-from-file (filePath &optional (delimiter '\n'))
+  "Return filePath's file content."
+  (with-temp-buffer
+    (insert-file-contents filePath)
+    (split-string buffer-string delimiter)))
 
 (provide 'just-utils)
