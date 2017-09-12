@@ -1,6 +1,14 @@
 (require 'just-utils)
 
+(defconst PREETEST-PKG-FILE "preetest.pkg")
 (defconst PREETEST-MAGIC-TEXT "PREETEST_PACKAGE")
+(defconst PREETEST-QUESTION-DIR "questions/")
+(defconst PREETEST-ANSWER-DIR "answers/")
+
+(defconst PREETEST-QUESTION-DEFAULT "Create new question with pretest-new-question")
+
+(defconst PREETEST-QUESTION-DELIMITER "###")
+
 (defvar preetest-current-loc nil)
 
 (define-minor-mode preetest-mode
@@ -29,9 +37,15 @@
 (defun preetest--create-test (location)
   (mkdir location)
   (cd location)
-  (with-temp-file "preetest.pkg"
+  (with-temp-file PREETEST-PKG-FILE
     (insert PREETEST-MAGIC-TEXT))
-  (mkdir "questions")
+  (mkdir PREETEST-QUESTION-DIR)
+  (mkdir PREETEST-ANSWER-DIR)
+  
+  (with-temp-file (concat PREETEST-QUESTION-DIR "0")
+    (insert PREETEST-QUESTION-DEFAULT))
+  ;TODO - correct into correct function.
+  (create-file (concat PREETEST-ANSWER-DIR "0")
 
   (preetest--open-test location))
 
