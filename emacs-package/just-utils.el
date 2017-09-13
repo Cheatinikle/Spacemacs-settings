@@ -44,12 +44,17 @@
   "Return filePath's file content."
   (with-temp-buffer
     (insert-file-contents filePath)
-    (buffer-string))) 
+    (buffer-string)))
 
 (cl-defun get-strings-from-file (filePath &optional (delimiter '\n'))
   "Return filePath's file content."
   (with-temp-buffer
     (insert-file-contents filePath)
     (split-string buffer-string delimiter)))
+
+(defun create-file (file)
+  (write-region "" nil file))
+
+(create-file "trump.test")
 
 (provide 'just-utils)
