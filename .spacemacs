@@ -317,14 +317,14 @@ layers configuration.
 This is the place where most of your configurations should be done. Unless it is
 explicitly specified that a variable should be set before a package is loaded,
 you should place your code here."
-  (progn
-    (add-to-load-path-if-exists "emacs-package")
-    (require 'just-search)
-    (require 'temp-repl-mode))
+
+  (add-to-load-path-if-exists "emacs-package")
+  (require 'just-search)
+  (require 'temp-repl-mode)
 
   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
   (add-hook 'emacs-lisp-mode-hook 'prettify-symbols-mode)
-  (add-hook 'emacs-lisp-mode-hook (lambda () (push '("funcall" . ?ζ) lisp--prettify-symbols-alist))) 
+  (add-hook 'emacs-lisp-mode-hook (lambda () (push '("funcall" . ?ζ) lisp--prettify-symbols-alist)))
 
   (temp-repl-add "funcall2" "ζζ")
 
@@ -334,8 +334,7 @@ you should place your code here."
 
   (dotspacemacs/user-keys)
 
-  (setq projectile-tags-command (concat (getenv "APPDATA") "\\emacs-plugins\\ctags58\\ctags.exe -R -e"))
-  )
+  (setq projectile-tags-command (concat (getenv "APPDATA") "\\emacs-plugins\\ctags58\\ctags.exe -R -e")))
 
 (defun dotspacemacs/user-keys ()
   ;; (spacemacs/set-leader-keys "bd" 'temp-repl--restore-and-kill-buffer)
@@ -351,11 +350,11 @@ you should place your code here."
   (define-key evil-normal-state-map "gL" 'evil-end-of-line)
   (define-key evil-normal-state-map "gp" 'evil-jump-item)
 
-  (spacemacs/declare-prefix "oh" "haskell")
-  (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohs" 'intero-apply-suggestions)
-  (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohe" 'flycheck-list-errors)
-  (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohl" 'intero-repl-load)
-  (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohd" 'intero-goto-definition)
+  ;; (spacemacs/declare-prefix "oh" "haskell")
+  ;; (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohs" 'intero-apply-suggestions)
+  ;; (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohe" 'flycheck-list-errors)
+  ;; (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohl" 'intero-repl-load)
+  ;; (spacemacs/set-leader-keys-for-minor-mode 'intero-mode "ohd" 'intero-goto-definition)
 
   (spacemacs/declare-prefix "ot" "editing")
   (spacemacs/set-leader-keys "otc" 'capitalize-word)
