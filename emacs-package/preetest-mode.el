@@ -5,22 +5,30 @@
 (defconst PREETEST-QUESTION-DIR "questions/")
 (defconst PREETEST-ANSWER-DIR "answers/")
 
-(defconst PREETEST-QUESTION-DEFAULT "Create new question with pretest-new-question")
+(defconst PREETEST-QUESTION-DEFAULT
+  "Create new question with pretest-new-question
+   ###
+   is delimiter.")
 
 (defconst PREETEST-QUESTION-DELIMITER "###")
 
 (defvar preetest-current-loc nil)
 (defvar preetest-q-number 0)
 
-(defvar preetest-mode-map nil "Keymap for preetest-mode")
-
+(setq preetest-mode-map nil)
 (setq preetest-mode-map (make-sparse-keymap))
 (define-key preetest-mode-map "l" 'preetest-next-question)
 (define-key preetest-mode-map "h" 'preetest-prev-question)
-(define-key preetest-mode-map "g" 'preetest-navigate-question)
+;; (define-key preetest-mode-map "g" 'preetest-navigate-question)
+(define-key preetest-mode-map "g" 'ignore)
 (define-key preetest-mode-map (kbd "RET") 'preetest-insert-answer)
 
-(define-derived-mode preetest-mode fundamental-mode "Preetest")
+(put 'preetest-mode 'mode-class 'special)
+
+(define-derived-mode preetest-mode nil "Preetest"
+  (use-local-map preetest-mode-map))
+
+(evil-set-initial-state 'preetest-mode 'emacs)
 
 ; TODO s
 (defun preetest-next-question () undefined)
@@ -28,7 +36,8 @@
 (defun preetest-navigate-question () undefined)
 (defun preetest-delete-question () undefined)
 (defun preetest-edit-question () undefined)
-(defun preetest-insert-answer () undefined)
+(defun preetest-insert-answer () (interactive)(message "HI!"))
+
 (defun preetest-check-answer () undefined)
 
 ;TODO - add opening question function.
@@ -56,9 +65,28 @@
 ; (2) Insert question on question window.
 ; (3) Activate preetest-mode on question window.
 
-(defun preetest--open-question (n location)
+(defun preetest--init (n location)
   (with-directory location
-  )
+    (select-window-1)
+    (switch-to-buffer (concat (file-name-nondirectory (directory-file-name (file-name-directory location)))
+                               " (" (number-to-string n) ")"))
+    (with-directory PREETEST-QUESTION-DIR
+      (insert (car (get-strings-from-file (number-to-string n) PREETEST-QUESTION-DELIMITER))))
+
+    (setq buffer-read-only t)
+    (toggle-truncate-lines 0)
+    (setq truncate-partial-width-windows 0)
+    (preetest-mode)
+
+    (split-window-right)
+    (select-window-2)
+    (with-directory PREETEST-ANSWER-DIR
+      (switch-to-buffer (find-file (number-to-string n))))))
+
+(defun preetest--navigate-question (n location)
+  (with-directory location
+   
+                  )
   )
 
 (defun preetest--add-question (n location)
