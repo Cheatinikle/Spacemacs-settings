@@ -36,9 +36,10 @@
 (defmacro with-directory (dir &rest body)
   (let ((srcdir (make-symbol "srcdir")))
     `(let ((,srcdir (substring (pwd) 10)))
-       (cd ,dir)
-       ,@body
-       (cd ,srcdir))))
+       (prog2
+         (cd ,dir)
+         (progn ,@body)
+         (cd ,srcdir)))))
 
 (defun get-string-from-file (filePath)
   "Return filePath's file content."
@@ -54,7 +55,5 @@
 
 (defun create-file (file)
   (write-region "" nil file))
-
-(create-file "trump.test")
 
 (provide 'just-utils)
