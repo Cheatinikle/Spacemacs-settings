@@ -34,6 +34,10 @@
   (cd location)
   (string-equal (get-string-from-file location) PREETEST-MAGIC-TEXT))
 
+; TODO - handle "." and ".." etc
+(defun preetest--get-last (location)
+  (seq-max (-map 'string-to-number (directory-files location))))
+
 (defun preetest--create-test (location)
   (mkdir location)
   (cd location)
