@@ -12,6 +12,26 @@
 (defvar preetest-current-loc nil)
 (defvar preetest-q-number 0)
 
+(defvar preetest-mode-map nil "Keymap for preetest-mode")
+
+(setq preetest-mode-map (make-sparse-keymap))
+(define-key preetest-mode-map "l" )
+
+(define-derived-mode preetest-mode fundamental-mode "Preetest")
+
+; TODO s
+(defun preetest-next-question () undefined)
+(defun preetest-prev-question () undefined)
+(defun preetest-delete-question () undefined)
+(defun preetest-edit-question () undefined)
+(defun preetest-insert-answer () undefined)
+(defun preetest-check-answer () undefined)
+
+;TODO - add opening question function.
+(defun preetest-add-question ()
+  (interactive)
+  (preetest--add-question preetest-q-number preetest-current-loc))
+
 (defun preetest-create-test ()
   (interactive)
   (let ((location (read-directory-name "Create test - Select location λ  ")))
@@ -26,10 +46,6 @@
   (with-directory location
     (string-equal (get-string-from-file PREETEST-PKG-FILE)
                   PREETEST-MAGIC-TEXT)))
-
-(defun preetest-add-question ()
-  (interactive)
-  (preetest--add-question preetest-q-number preetest-current-loc))
 
 (defun preetest--add-question (n location)
   (with-directory location
