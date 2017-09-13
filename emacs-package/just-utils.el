@@ -47,7 +47,7 @@
     (insert-file-contents filePath)
     (buffer-string)))
 
-(cl-defun get-strings-from-file (filePath &optional (delimiter '\n'))
+(cl-defun get-strings-from-file (filePath &optional (delimiter "\n"))
   "Return filePath's file content."
   (with-temp-buffer
     (insert-file-contents filePath)
