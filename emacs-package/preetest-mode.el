@@ -15,13 +15,17 @@
 (defvar preetest-mode-map nil "Keymap for preetest-mode")
 
 (setq preetest-mode-map (make-sparse-keymap))
-(define-key preetest-mode-map "l" )
+(define-key preetest-mode-map "l" 'preetest-next-question)
+(define-key preetest-mode-map "h" 'preetest-prev-question)
+(define-key preetest-mode-map "g" 'preetest-navigate-question)
+(define-key preetest-mode-map (kbd "RET") 'preetest-insert-answer)
 
 (define-derived-mode preetest-mode fundamental-mode "Preetest")
 
 ; TODO s
 (defun preetest-next-question () undefined)
 (defun preetest-prev-question () undefined)
+(defun preetest-navigate-question () undefined)
 (defun preetest-delete-question () undefined)
 (defun preetest-edit-question () undefined)
 (defun preetest-insert-answer () undefined)
@@ -46,6 +50,16 @@
   (with-directory location
     (string-equal (get-string-from-file PREETEST-PKG-FILE)
                   PREETEST-MAGIC-TEXT)))
+
+; (1) Split frame into two windows : question, answer.
+;     question : readonly mode.
+; (2) Insert question on question window.
+; (3) Activate preetest-mode on question window.
+
+(defun preetest--open-question (n location)
+  (with-directory location
+  )
+  )
 
 (defun preetest--add-question (n location)
   (with-directory location
