@@ -51,7 +51,7 @@
   "Return filePath's file content."
   (with-temp-buffer
     (insert-file-contents filePath)
-    (split-string buffer-string delimiter)))
+    (split-string (buffer-string) delimiter)))
 
 (defun create-file (file)
   (write-region "" nil file))
