@@ -65,11 +65,10 @@
 ; (2) Insert question on question window.
 ; (3) Activate preetest-mode on question window.
 
-(defun preetest--init (n location)
+(defun preetest--init (location)
   (with-directory location
     (select-window-1)
-    (switch-to-buffer (concat (file-name-nondirectory (directory-file-name (file-name-directory location)))
-                               " (" (number-to-string n) ")"))
+    (switch-to-buffer (preetest--get-buffer-name 0 location))
     (with-directory PREETEST-QUESTION-DIR
       (insert (car (get-strings-from-file (number-to-string n) PREETEST-QUESTION-DELIMITER))))
 
@@ -130,5 +129,9 @@
 
 (defun preetest--get-last (dir)
   (seq-max (-map 'string-to-number (directory-files dir))))
+
+(defun preetest--buffer-name (location n)
+  (concat (file-name-nondirectory (directory-file-name (file-name-directory location)))
+           " (" (number-to-string n) ")"))
 
 (provide 'preetest)
