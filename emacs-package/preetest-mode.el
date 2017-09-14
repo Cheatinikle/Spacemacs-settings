@@ -21,6 +21,7 @@
 (define-key preetest-mode-map "h" 'preetest-prev-question)
 (define-key preetest-mode-map "g" 'preetest-navigate-question)
 (define-key preetest-mode-map (kbd "RET") 'preetest-insert-answer)
+(define-key preetest-mode-map "h" 'preetest-hide-answer)
 
 (put 'preetest-mode 'mode-class 'special)
 
@@ -64,9 +65,20 @@
   (if preetest-current-loc
       (select-window-2)))
 
-; TODO
-(defun preetest-edit-question () undefined)
-(defun preetest-show-answer () undefined)
+(defun preetest-edit-question ()
+  (interactive)
+  (if preetest-current-loc
+      (preetest--edit-question preetest-q-number preetest-current-loc)))
+
+(defun preetest-show-answer () 
+  (interactive)
+  (if preetest-current-loc
+    (preetest--show-answer preetest-q-number preetest-current-loc)))
+
+(defun preetest-hide-answer () 
+  (interactive)
+  (if preetest-current-loc
+    (preetest--hide-answer preetest-q-number preetest-current-loc)))
 
 (defun preetest-create-test ()
   (interactive)
@@ -109,6 +121,23 @@
     (split-window-right)
 
     (preetest--update 0 location)))
+
+(defun preetest--edit-question (n location) 
+  (with-directory location
+    (with-directory PREETEST-QUESTION-DIR
+      (switch-to-buffer (find-file (number-to-string n))))))
+
+(defun preetest--show-answer (n location) 
+  (select-window-1)
+  (setq buffer-read-only nil)
+  (erase-buffer) ;TODO - is it right?
+  (insert (preetest--get-whole n location))
+  
+(defun preetest--hide-answer (n location) 
+  (select-window-1)
+  (setq buffer-read-only nil)
+  (erase-buffer) ;TODO - is it right?
+  (insert (preetest--get-question n location))
 
 (defun preetest--navigate-question (n location)
   (unless (= n preetest-q-number)
@@ -178,5 +207,10 @@
   (with-directory location
     (with-directory PREETEST-QUESTION-DIR
       (get-strings-from-file (number-to-string n) PREETEST-QUESTION-DELIMITER)))
+  
+(defun preetest--get-whole (n location)
+  (with-directory location
+    (with-directory PREETEST-QUESTION-DIR
+      (get-string-from-file (number-to-string n))))
 
 (provide 'preetest)
