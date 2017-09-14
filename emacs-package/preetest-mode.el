@@ -70,7 +70,7 @@
     (select-window-1)
     (switch-to-buffer (preetest--get-buffer-name 0 location))
     (with-directory PREETEST-QUESTION-DIR
-      (insert (car (get-strings-from-file (number-to-string n) PREETEST-QUESTION-DELIMITER))))
+      (insert (preetest--get-question 0)))
 
     (setq buffer-read-only t)
     (toggle-truncate-lines 0)
@@ -130,8 +130,13 @@
 (defun preetest--get-last (dir)
   (seq-max (-map 'string-to-number (directory-files dir))))
 
-(defun preetest--buffer-name (location n)
+(defun preetest--buffer-name (n location)
   (concat (file-name-nondirectory (directory-file-name (file-name-directory location)))
            " (" (number-to-string n) ")"))
+
+(defun preetest--get-question (n location)
+  (with-directory location
+    (with-directory PREETEST-QUESTION-DIR
+      (get-strings-from-file (number-to-string n) PREETEST-QUESTION-DELIMITER)))
 
 (provide 'preetest)
