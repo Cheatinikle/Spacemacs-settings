@@ -19,8 +19,7 @@
 (setq preetest-mode-map (make-sparse-keymap))
 (define-key preetest-mode-map "l" 'preetest-next-question)
 (define-key preetest-mode-map "h" 'preetest-prev-question)
-;; (define-key preetest-mode-map "g" 'preetest-navigate-question)
-(define-key preetest-mode-map "g" 'ignore)
+(define-key preetest-mode-map "g" 'preetest-navigate-question)
 (define-key preetest-mode-map (kbd "RET") 'preetest-insert-answer)
 
 (put 'preetest-mode 'mode-class 'special)
@@ -30,20 +29,44 @@
 
 (evil-set-initial-state 'preetest-mode 'emacs)
 
-; TODO s
-(defun preetest-next-question () undefined)
-(defun preetest-prev-question () undefined)
-(defun preetest-navigate-question () undefined)
-(defun preetest-delete-question () undefined)
-(defun preetest-edit-question () undefined)
-(defun preetest-insert-answer () (interactive)(message "HI!"))
-
-(defun preetest-check-answer () undefined)
-
-;TODO - add opening question function.
 (defun preetest-add-question ()
   (interactive)
-  (preetest--add-question preetest-q-number preetest-current-loc))
+  (if preetest-current-loc
+   (preetest--add-question (1+ preetest-q-number) preetest-current-loc)
+   (preetest--navigate-question (1+ preetest-q-number) preetest-current-loc)))
+
+(defun preetest-delete-question ()
+  (interactive)
+  (if preetest-current-loc
+   (preetest--navigate-question (1- preetest-q-number) preetest-current-loc)
+   (preetest--delete-question (1+ preetest-q-number) preetest-current-loc)))
+
+(defun preetest-next-question () 
+  (interactive)
+  (if preetest-current-loc
+    (if (preetest--question-exists? (1+ preetest-q-number) preetest-current-loc)
+      (preetest--navigate-question (1+ preetest-q-number) preetest-current-loc))))
+
+(defun preetest-prev-question () 
+  (interactive)
+  (if preetest-current-loc
+    (if (preetest--question-exists? (1- preetest-q-number) preetest-current-loc)
+      (preetest--navigate-question (1- preetest-q-number) preetest-current-loc))))
+
+(defun preetest-navigate-question (n) 
+  (interactive "Insert question number... ")
+  (if preetest-current-loc
+    (if (preetest--question-exists? n preetest-current-loc)
+      (preetest--navigate-question n preetest-current-loc))))
+
+(defun preetest-insert-answer () 
+  (interactive)
+  (if preetest-current-loc
+      (select-window-2)))
+
+; TODO
+(defun preetest-edit-question () undefined)
+(defun preetest-show-answer () undefined)
 
 (defun preetest-create-test ()
   (interactive)
@@ -95,6 +118,16 @@
   (with-directory location
     (preetest--add-element n PREETEST-QUESTION-DIR)
     (preetest--add-element n PREETEST-ANSWER-DIR)))
+
+(defun preetest--delete-question (n location)
+  (with-directory location
+    (preetest--remove-element n PREETEST-QUESTION-DIR)
+    (preetest--remove-element n PREETEST-ANSWER-DIR)))
+
+(defun preetest--question-exists? (n location)
+  (with-directory location
+    (with-directory PREETEST-QUESTION-DIR\
+      (file-exists-p (number-to-string n)))))
 
 (defun preetest--create-test (location)
   (mkdir location)
