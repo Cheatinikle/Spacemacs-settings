@@ -75,11 +75,6 @@
     (with-directory PREETEST-ANSWER-DIR
         (switch-to-buffer (find-file (number-to-string n))))))
 
-; (1) Split frame into two windows : question, answer.
-;     question : readonly mode.
-; (2) Insert question on question window.
-; (3) Activate preetest-mode on question window.
-
 (defun preetest--init (location)
   (with-directory location
     (select-window-1)
@@ -88,14 +83,13 @@
     (toggle-truncate-lines 0)
     (setq truncate-partial-width-windows 0)
     (preetest-mode)
-
     (split-window-right)
 
     (preetest--update 0 location)))
 
 (defun preetest--navigate-question (n location)
   (with-directory location
-   
+    (
                   )
   )
 
@@ -138,6 +132,10 @@
     (dolist (i (number-sequence n (preetest--get-last location)))
       (rename-file (number-to-string i) (number-to-string (1- i))))))
 
+(defun preetest--change-q (n location)
+  (setq preetest-q-number n)
+  (preetest--update n location))
+  
 (defun preetest--get-last (dir)
   (seq-max (-map 'string-to-number (directory-files dir))))
 
