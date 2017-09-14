@@ -21,7 +21,8 @@
 (define-key preetest-mode-map "h" 'preetest-prev-question)
 (define-key preetest-mode-map "g" 'preetest-navigate-question)
 (define-key preetest-mode-map (kbd "RET") 'preetest-insert-answer)
-(define-key preetest-mode-map "h" 'preetest-hide-answer)
+(define-key preetest-mode-map "a" 'preetest-add-question)
+(define-key preetest-mode-map "u" 'preetest-hide-answer)
 
 (put 'preetest-mode 'mode-class 'special)
 
@@ -34,7 +35,8 @@
   (interactive)
   (if preetest-current-loc
    (preetest--add-question (1+ preetest-q-number) preetest-current-loc)
-   (preetest--navigate-question (1+ preetest-q-number) preetest-current-loc)))
+   (preetest--navigate-question preetest-q-number preetest-current-loc)
+   (preetest-edit-question)))
 
 (defun preetest-delete-question ()
   (interactive)
@@ -42,25 +44,25 @@
    (preetest--navigate-question (1- preetest-q-number) preetest-current-loc)
    (preetest--delete-question (1+ preetest-q-number) preetest-current-loc)))
 
-(defun preetest-next-question () 
+(defun preetest-next-question ()
   (interactive)
   (if preetest-current-loc
     (if (preetest--question-exists? (1+ preetest-q-number) preetest-current-loc)
       (preetest--navigate-question (1+ preetest-q-number) preetest-current-loc))))
 
-(defun preetest-prev-question () 
+(defun preetest-prev-question ()
   (interactive)
   (if preetest-current-loc
     (if (preetest--question-exists? (1- preetest-q-number) preetest-current-loc)
       (preetest--navigate-question (1- preetest-q-number) preetest-current-loc))))
 
-(defun preetest-navigate-question (n) 
-  (interactive "Insert question number... ")
+(defun preetest-navigate-question (n)
+  (interactive "nInsert question number... ")
   (if preetest-current-loc
     (if (preetest--question-exists? n preetest-current-loc)
       (preetest--navigate-question n preetest-current-loc))))
 
-(defun preetest-insert-answer () 
+(defun preetest-insert-answer ()
   (interactive)
   (if preetest-current-loc
       (select-window-2)))
@@ -70,12 +72,12 @@
   (if preetest-current-loc
       (preetest--edit-question preetest-q-number preetest-current-loc)))
 
-(defun preetest-show-answer () 
+(defun preetest-show-answer ()
   (interactive)
   (if preetest-current-loc
     (preetest--show-answer preetest-q-number preetest-current-loc)))
 
-(defun preetest-hide-answer () 
+(defun preetest-hide-answer ()
   (interactive)
   (if preetest-current-loc
     (preetest--hide-answer preetest-q-number preetest-current-loc)))
@@ -95,7 +97,7 @@
   (select-window-1)
   (kill-buffer-and-window)
   (setq preetest-current-loc nil)
-  (setq preetest-q-number nil)  )
+  (setq preetest-q-number 0))
 
 (defun preetest-package? (location)
   (with-directory location
@@ -106,14 +108,13 @@
   (with-directory location
     (select-window-1)
     (setq buffer-read-only nil)
-    (rename-buffer (preetest--get-buffer-name n location))    
-    (erase-buffer) ;TODO - is it right?
+    (rename-buffer (preetest--buffer-name n location))
+    (erase-buffer) 
     (with-directory PREETEST-QUESTION-DIR
-      (insert (preetest--get-question n)))   
+      (insert (preetest--get-question n location)))
+
     (setq buffer-read-only t)
-    
     (select-window-2)
-    (save-buffer) ; TODO - is it right?
     (with-directory PREETEST-ANSWER-DIR
         (switch-to-buffer (find-file (number-to-string n))))))
 
@@ -129,22 +130,24 @@
 
     (preetest--update 0 location)))
 
-(defun preetest--edit-question (n location) 
+(defun preetest--edit-question (n location)
   (with-directory location
     (with-directory PREETEST-QUESTION-DIR
       (switch-to-buffer (find-file (number-to-string n))))))
 
-(defun preetest--show-answer (n location) 
+(defun preetest--show-answer (n location)
   (select-window-1)
   (setq buffer-read-only nil)
-  (erase-buffer) ;TODO - is it right?
+  (erase-buffer)
   (insert (preetest--get-whole n location))
-  
-(defun preetest--hide-answer (n location) 
+  (setq buffer-read-only t))
+
+(defun preetest--hide-answer (n location)
   (select-window-1)
   (setq buffer-read-only nil)
-  (erase-buffer) ;TODO - is it right?
+  (erase-buffer)
   (insert (preetest--get-question n location))
+  (setq buffer-read-only t))
 
 (defun preetest--navigate-question (n location)
   (unless (= n preetest-q-number)
@@ -162,7 +165,7 @@
 
 (defun preetest--question-exists? (n location)
   (with-directory location
-    (with-directory PREETEST-QUESTION-DIR\
+    (with-directory PREETEST-QUESTION-DIR
       (file-exists-p (number-to-string n)))))
 
 (defun preetest--create-test (location)
@@ -183,26 +186,24 @@
   (with-directory location
     (unless (preetest-package? location) (error "Not a preetest test!"))
     (setq preetest-current-loc location)
-
-    ;;(preetest-mode))
-))
+    (preetest--init preetest-current-loc)))
 
 (defun preetest--add-element (n location)
   (with-directory location
-    (dolist (i (number-sequence (preetest--get-last location) n -1))
+    (dolist (i (number-sequence (preetest--get-last (substring (pwd) 10)) n -1))
       (rename-file (number-to-string i) (number-to-string (1+ i))))
     (create-file (number-to-string n))))
 
 (defun preetest--remove-element (n location)
   (with-directory location
     (delete-file (number-to-string n))
-    (dolist (i (number-sequence n (preetest--get-last location)))
+    (dolist (i (number-sequence n (preetest--get-last (substring (pwd) 10))))
       (rename-file (number-to-string i) (number-to-string (1- i))))))
 
 (defun preetest--change-q (n location)
   (setq preetest-q-number n)
   (preetest--update n location))
-  
+
 (defun preetest--get-last (dir)
   (seq-max (-map 'string-to-number (directory-files dir))))
 
@@ -213,11 +214,11 @@
 (defun preetest--get-question (n location)
   (with-directory location
     (with-directory PREETEST-QUESTION-DIR
-      (get-strings-from-file (number-to-string n) PREETEST-QUESTION-DELIMITER)))
-  
+      (car (get-strings-from-file (number-to-string n) PREETEST-QUESTION-DELIMITER)))))
+
 (defun preetest--get-whole (n location)
   (with-directory location
     (with-directory PREETEST-QUESTION-DIR
-      (get-string-from-file (number-to-string n))))
+      (get-string-from-file (number-to-string n)))))
 
 (provide 'preetest)
