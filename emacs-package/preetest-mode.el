@@ -35,7 +35,7 @@
   (interactive)
   (if preetest-current-loc
    (preetest--add-question (1+ preetest-q-number) preetest-current-loc)
-   (preetest--navigate-question preetest-q-number preetest-current-loc)
+   (preetest--navigate-question (1+ preetest-q-number) preetest-current-loc)
    (preetest-edit-question)))
 
 (defun preetest-delete-question ()
@@ -59,8 +59,7 @@
 (defun preetest-navigate-question (n)
   (interactive "nInsert question number... ")
   (if preetest-current-loc
-    (if (preetest--question-exists? n preetest-current-loc)
-      (preetest--navigate-question n preetest-current-loc))))
+    (preetest--navigate-question n preetest-current-loc)))
 
 (defun preetest-insert-answer ()
   (interactive)
@@ -109,14 +108,14 @@
     (select-window-1)
     (setq buffer-read-only nil)
     (rename-buffer (preetest--buffer-name n location))
-    (erase-buffer) 
+    (erase-buffer)
     (with-directory PREETEST-QUESTION-DIR
       (insert (preetest--get-question n location)))
 
     (setq buffer-read-only t)
     (select-window-2)
     (with-directory PREETEST-ANSWER-DIR
-        (switch-to-buffer (find-file (number-to-string n))))))
+      (switch-to-buffer (find-file (number-to-string n))))))
 
 (defun preetest--init (location)
   (with-directory location
@@ -151,7 +150,8 @@
 
 (defun preetest--navigate-question (n location)
   (unless (= n preetest-q-number)
-    (preetest--change-q n location)))
+    (if (preetest--question-exists? n location)
+      (preetest--change-q n location))))
 
 (defun preetest--add-question (n location)
   (with-directory location
@@ -164,9 +164,13 @@
     (preetest--remove-element n PREETEST-ANSWER-DIR)))
 
 (defun preetest--question-exists? (n location)
-  (with-directory location
-    (with-directory PREETEST-QUESTION-DIR
-      (file-exists-p (number-to-string n)))))
+  (and
+   (with-directory location
+     (with-directory PREETEST-QUESTION-DIR
+       (file-exists-p (number-to-string n))))
+   (with-directory location
+     (with-directory PREETEST-ANSWER-DIR
+       (file-exists-p (number-to-string n))))))
 
 (defun preetest--create-test (location)
   (mkdir location)
@@ -201,8 +205,8 @@
       (rename-file (number-to-string i) (number-to-string (1- i))))))
 
 (defun preetest--change-q (n location)
-  (setq preetest-q-number n)
-  (preetest--update n location))
+  (preetest--update n location)
+  (setq preetest-q-number n))
 
 (defun preetest--get-last (dir)
   (seq-max (-map 'string-to-number (directory-files dir))))
