@@ -60,6 +60,21 @@
     (string-equal (get-string-from-file PREETEST-PKG-FILE)
                   PREETEST-MAGIC-TEXT)))
 
+(defun preetest--update (n location)
+  (with-directory location
+    (select-window-1)
+    (setq buffer-read-only nil)
+    (rename-buffer (preetest--get-buffer-name n location))    
+    (erase-buffer) ;TODO - is it right?
+    (with-directory PREETEST-QUESTION-DIR
+      (insert (preetest--get-question n)))   
+    (setq buffer-read-only t)
+    
+    (select-window-2)
+    (save-buffer) ; TODO - is it right?
+    (with-directory PREETEST-ANSWER-DIR
+        (switch-to-buffer (find-file (number-to-string n))))))
+
 ; (1) Split frame into two windows : question, answer.
 ;     question : readonly mode.
 ; (2) Insert question on question window.
@@ -68,19 +83,15 @@
 (defun preetest--init (location)
   (with-directory location
     (select-window-1)
-    (switch-to-buffer (preetest--get-buffer-name 0 location))
-    (with-directory PREETEST-QUESTION-DIR
-      (insert (preetest--get-question 0)))
-
+    (switch-to-buffer "temp")
     (setq buffer-read-only t)
     (toggle-truncate-lines 0)
     (setq truncate-partial-width-windows 0)
     (preetest-mode)
 
     (split-window-right)
-    (select-window-2)
-    (with-directory PREETEST-ANSWER-DIR
-      (switch-to-buffer (find-file (number-to-string n))))))
+
+    (preetest--update 0 location)))
 
 (defun preetest--navigate-question (n location)
   (with-directory location
