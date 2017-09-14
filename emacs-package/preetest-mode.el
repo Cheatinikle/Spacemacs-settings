@@ -88,10 +88,8 @@
     (preetest--update 0 location)))
 
 (defun preetest--navigate-question (n location)
-  (with-directory location
-    (
-                  )
-  )
+  (unless (= n preetest-q-number)
+    (preetest--change-q n location)))
 
 (defun preetest--add-question (n location)
   (with-directory location
