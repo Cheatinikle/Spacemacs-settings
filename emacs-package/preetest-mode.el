@@ -90,6 +90,13 @@
   (let ((location (read-directory-name "Open test - Select location λ  ")))
     (preetest--open-test location)))
 
+(defun preetest-close-test ()
+  (interactive)
+  (select-window-1)
+  (kill-buffer-and-window)
+  (setq preetest-current-loc nil)
+  (setq preetest-q-number nil)  )
+
 (defun preetest-package? (location)
   (with-directory location
     (string-equal (get-string-from-file PREETEST-PKG-FILE)
