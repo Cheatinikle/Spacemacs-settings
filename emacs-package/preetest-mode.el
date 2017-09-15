@@ -24,6 +24,11 @@
 (define-key preetest-mode-map "a" 'preetest-add-question)
 (define-key preetest-mode-map "u" 'preetest-hide-answer)
 
+(define-key preetest-mode-map (kbd "M-q s") 'preetest-show-answer)
+(define-key preetest-mode-map (kbd "M-q e") 'preetest-edit-question)
+(define-key preetest-mode-map (kbd "M-q x") 'preetest-delete-question)
+(define-key preetest-mode-map (kbd "M-q c x") 'preetest-clear-answers)
+
 (put 'preetest-mode 'mode-class 'special)
 
 (define-derived-mode preetest-mode nil "Preetest"
@@ -33,16 +38,17 @@
 
 (defun preetest-add-question ()
   (interactive)
-  (if preetest-current-loc
+  (when preetest-current-loc
    (preetest--add-question (1+ preetest-q-number) preetest-current-loc)
-   (preetest-next-question)
+   (preetest-navigate-question (1+ preetest-q-number))
    (preetest-edit-question)))
 
-(defun preetest-delete-question ()
-  (interactive)
-  (if preetest-current-loc
-   (preetest--navigate-question (1- preetest-q-number) preetest-current-loc)
-   (preetest--delete-question (1+ preetest-q-number) preetest-current-loc)))
+(defun preetest-delete-question (confirm)
+  (interactive "sAre you sure? (y or n)   ")
+  (when preetest-current-loc
+    (when (string-equal confirm "y")
+      (preetest--navigate-question (1- preetest-q-number) preetest-current-loc)
+      (preetest--delete-question (1+ preetest-q-number) preetest-current-loc))))
 
 (defun preetest-next-question ()
   (interactive)
@@ -81,6 +87,16 @@
   (if preetest-current-loc
     (preetest--hide-answer preetest-q-number preetest-current-loc)))
 
+(defun preetest-clear-answers (confirm)
+  (interactive "sAre you sure? (y or n)   ")
+  (when preetest-current-loc
+    (when (string-equal confirm "y")
+      (let ((loc (concat preetest-current-loc PREETEST-ANSWER-DIR)))
+        (select-window-2)
+        (switch-to-buffer (find-file (concat loc "0")))
+        (dolist (i (number-sequence 1 (preetest--get-last loc)))
+          (delete-file (concat loc (number-to-string i))))))))
+
 (defun preetest-create-test ()
   (interactive)
   (let ((location (read-directory-name "Create test - Select location λ  ")))
@@ -109,14 +125,6 @@
 
 (defun preetest--update (n location)
   (with-directory location
-    (select-window-1)
-    (setq buffer-read-only nil)
-    (rename-buffer (preetest--buffer-name n location))
-    (erase-buffer)
-    (with-directory PREETEST-QUESTION-DIR
-      (insert (preetest--get-question n location)))
-    (setq buffer-read-only t)
-
     (select-window-2)
     (with-directory (concat location PREETEST-ANSWER-DIR)
       (let ((buf (current-buffer)))
@@ -125,7 +133,13 @@
         (switch-to-buffer (find-file (number-to-string n)))
         (kill-buffer buf)))
 
-    (select-window-1)))
+    (select-window-1)
+    (setq buffer-read-only nil)
+    (rename-buffer (preetest--buffer-name n location))
+    (erase-buffer)
+    (with-directory (concat location PREETEST-QUESTION-DIR)
+                    (insert (preetest--get-question n location)))
+    (setq buffer-read-only t)))
 
 (defun preetest--init (location)
   (with-directory location
@@ -177,13 +191,9 @@
     (preetest--remove-element n PREETEST-ANSWER-DIR)))
 
 (defun preetest--question-exists? (n location)
-  (and
    (with-directory location
      (with-directory PREETEST-QUESTION-DIR
-       (file-exists-p (number-to-string n))))
-   (with-directory location
-     (with-directory PREETEST-ANSWER-DIR
-       (file-exists-p (number-to-string n))))))
+       (file-exists-p (number-to-string n)))))
 
 (defun preetest--create-test (location)
   (mkdir location)
@@ -214,7 +224,7 @@
 (defun preetest--remove-element (n location)
   (with-directory location
     (delete-file (number-to-string n))
-    (dolist (i (number-sequence n (preetest--get-last (substring (pwd) 10))))
+    (dolist (i (number-sequence (1+ n) (preetest--get-last (substring (pwd) 10))))
       (rename-file (number-to-string i) (number-to-string (1- i))))))
 
 (defun preetest--change-q (n location)
