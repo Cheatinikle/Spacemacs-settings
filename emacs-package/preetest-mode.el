@@ -22,7 +22,7 @@
 (define-key preetest-mode-map "g" (lambda () (interactive) (preetest-navigate-question)))
 (define-key preetest-mode-map (kbd "RET") (lambda () (interactive) (preetest-insert-answer)))
 (define-key preetest-mode-map "a" (lambda () (interactive) (preetest-add-question)))
-(define-key preetest-mode-map "u" (lambda () (interactive) ('preetest-hide-answer)))
+(define-key preetest-mode-map "u" (lambda () (interactive) (preetest-hide-answer)))
 
 (defconst PREETEST-PKG-FILE "preetest.pkg")
 (defconst PREETEST-MAGIC-TEXT "PREETEST_PACKAGE")
