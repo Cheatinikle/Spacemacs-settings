@@ -17,36 +17,12 @@
 
 (setq preetest-mode-map nil)
 (setq preetest-mode-map (make-sparse-keymap))
-(define-key preetest-mode-map "l" (lambda () (interactive) (preetest-next-question)))
-(define-key preetest-mode-map "h" (lambda () (interactive) (preetest-prev-question)))
-(define-key preetest-mode-map "g" (lambda () (interactive) (preetest-navigate-question)))
-(define-key preetest-mode-map (kbd "RET") (lambda () (interactive) (preetest-insert-answer)))
-(define-key preetest-mode-map "a" (lambda () (interactive) (preetest-add-question)))
-(define-key preetest-mode-map "u" (lambda () (interactive) (preetest-hide-answer)))
-
-(defconst PREETEST-PKG-FILE "preetest.pkg")
-(defconst PREETEST-MAGIC-TEXT "PREETEST_PACKAGE")
-(defconst PREETEST-QUESTION-DIR "questions/")
-(defconst PREETEST-ANSWER-DIR "answers/")
-
-(defconst PREETEST-QUESTION-DEFAULT
-  "Create new question with pretest-new-question
-   ###
-   is delimiter.")
-
-(defconst PREETEST-QUESTION-DELIMITER "###")
-
-(defvar preetest-current-loc nil)
-(defvar preetest-q-number 0)
-
-(setq preetest-mode-map nil)
-(setq preetest-mode-map (make-sparse-keymap))
-(define-key preetest-mode-map "l" (lambda () (interactive) (preetest-next-question)))
-(define-key preetest-mode-map "h" (lambda () (interactive) (preetest-prev-question)))
-(define-key preetest-mode-map "g" (lambda () (interactive) (preetest-navigate-question)))
-(define-key preetest-mode-map (kbd "RET") (lambda () (interactive) (preetest-insert-answer)))
-(define-key preetest-mode-map "a" (lambda () (interactive) (preetest-add-question)))
-(define-key preetest-mode-map "u" (lambda () (interactive) (preetest-hide-answer)))
+(define-key preetest-mode-map "l" 'preetest-next-question)
+(define-key preetest-mode-map "h" 'preetest-prev-question)
+(define-key preetest-mode-map "g" 'preetest-navigate-question)
+(define-key preetest-mode-map (kbd "RET") 'preetest-insert-answer)
+(define-key preetest-mode-map "a" 'preetest-add-question)
+(define-key preetest-mode-map "u" 'preetest-hide-answer)
 
 (put 'preetest-mode 'mode-class 'special)
 
@@ -59,7 +35,7 @@
   (interactive)
   (if preetest-current-loc
    (preetest--add-question (1+ preetest-q-number) preetest-current-loc)
-   (preetest--navigate-question (1+ preetest-q-number) preetest-current-loc)
+   (preetest-next-question)
    (preetest-edit-question)))
 
 (defun preetest-delete-question ()
@@ -127,6 +103,10 @@
     (string-equal (get-string-from-file PREETEST-PKG-FILE)
                   PREETEST-MAGIC-TEXT)))
 
+(defun preetest-update ()
+  (interactive)
+  (preetest--update preetest-q-number preetest-current-loc))
+
 (defun preetest--update (n location)
   (with-directory location
     (select-window-1)
@@ -135,11 +115,17 @@
     (erase-buffer)
     (with-directory PREETEST-QUESTION-DIR
       (insert (preetest--get-question n location)))
-
     (setq buffer-read-only t)
+
     (select-window-2)
-    (with-directory PREETEST-ANSWER-DIR
-      (switch-to-buffer (find-file (number-to-string n))))))
+    (with-directory (concat location PREETEST-ANSWER-DIR)
+      (let ((buf (current-buffer)))
+        (save-buffer)
+        (unless (file-exists-p (number-to-string n)) (create-file (number-to-string n)))
+        (switch-to-buffer (find-file (number-to-string n)))
+        (kill-buffer buf)))
+
+    (select-window-1)))
 
 (defun preetest--init (location)
   (with-directory location
@@ -149,7 +135,10 @@
     (toggle-truncate-lines 0)
     (setq truncate-partial-width-windows 0)
     (preetest-mode)
+
     (split-window-right)
+    (select-window-2)
+    (switch-to-buffer "tempr")
 
     (preetest--update 0 location)))
 
@@ -229,9 +218,8 @@
       (rename-file (number-to-string i) (number-to-string (1- i))))))
 
 (defun preetest--change-q (n location)
-  (preetest--update n location)
   (setq preetest-q-number n)
-  (message (number-to-string n)))
+  (preetest--update preetest-q-number location))
 
 (defun preetest--get-last (dir)
   (seq-max (-map 'string-to-number (directory-files dir))))
