@@ -248,4 +248,4 @@
     (with-directory PREETEST-QUESTION-DIR
       (get-string-from-file (number-to-string n)))))
 
-(provide 'preetest)
+(provide 'preetest-mode)
