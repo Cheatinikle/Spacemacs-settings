@@ -70,7 +70,7 @@
 (defun preetest-insert-answer ()
   (interactive)
   (if preetest-current-loc
-      (select-window-2)))
+      (winum-select-window-2)))
 
 (defun preetest-edit-question ()
   (interactive)
@@ -92,7 +92,7 @@
   (when preetest-current-loc
     (when (string-equal confirm "y")
       (let ((loc (concat preetest-current-loc PREETEST-ANSWER-DIR)))
-        (select-window-2)
+        (winum-select-window-2)
         (switch-to-buffer (find-file (concat loc "0")))
         (dolist (i (number-sequence 1 (preetest--get-last loc)))
           (delete-file (concat loc (number-to-string i))))))))
@@ -109,7 +109,7 @@
 
 (defun preetest-close-test ()
   (interactive)
-  (select-window-1)
+  (winum-select-window-1)
   (kill-buffer-and-window)
   (setq preetest-current-loc nil)
   (setq preetest-q-number 0))
@@ -125,7 +125,7 @@
 
 (defun preetest--update (n location)
   (with-directory location
-    (select-window-2)
+    (winum-select-window-2)
     (with-directory (concat location PREETEST-ANSWER-DIR)
       (let ((buf (current-buffer)))
         (save-buffer)
@@ -133,7 +133,7 @@
         (switch-to-buffer (find-file (number-to-string n)))
         (kill-buffer buf)))
 
-    (select-window-1)
+    (winum-select-window-1)
     (setq buffer-read-only nil)
     (rename-buffer (preetest--buffer-name n location))
     (erase-buffer)
@@ -143,7 +143,7 @@
 
 (defun preetest--init (location)
   (with-directory location
-    (select-window-1)
+    (winum-select-window-1)
     (switch-to-buffer "temp")
     (setq buffer-read-only t)
     (toggle-truncate-lines 0)
@@ -151,7 +151,7 @@
     (preetest-mode)
 
     (split-window-right)
-    (select-window-2)
+    (winum-select-window-2)
     (switch-to-buffer "tempr")
 
     (preetest--update 0 location)))
@@ -162,14 +162,14 @@
       (switch-to-buffer (find-file (number-to-string n))))))
 
 (defun preetest--show-answer (n location)
-  (select-window-1)
+  (winum-select-window-1)
   (setq buffer-read-only nil)
   (erase-buffer)
   (insert (preetest--get-whole n location))
   (setq buffer-read-only t))
 
 (defun preetest--hide-answer (n location)
-  (select-window-1)
+  (winum-select-window-1)
   (setq buffer-read-only nil)
   (erase-buffer)
   (insert (preetest--get-question n location))
